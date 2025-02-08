@@ -323,6 +323,10 @@ export function prettyShortChatModelName(model: string | undefined): string {
     if (model.includes('o1-preview')) return 'o1 Preview';
     return 'o1';
   }
+  if (model.includes('o3-')) {
+    if (model.includes('o3-mini')) return 'o3 Mini';
+    return 'o3';
+  }
   if (model.includes('chatgpt-4o-latest')) return 'ChatGPT 4o';
   if (model.includes('gpt-4')) {
     if (model.includes('gpt-4o-mini')) return 'GPT-4o mini';
@@ -344,9 +348,24 @@ export function prettyShortChatModelName(model: string | undefined): string {
   // [Anthropic]
   const prettyAnthropic = _prettyAnthropicModelName(model);
   if (prettyAnthropic) return prettyAnthropic;
+  // [Gemini]
+  if (model.includes('gemini-')) {
+    return model.replaceAll('-', ' ')
+      .replace('gemini', 'Gemini')
+      .replace('pro', 'Pro')
+      .replace('flash', 'Flash')
+      .replace('thinking', 'Thinking');
+  }
   // [Deepseek]
-  if (model.includes('deepseek-chat')) return 'Deepseek Chat';
-  if (model.includes('deepseek-coder')) return 'Deepseek Coder';
+  if (model.includes('deepseek-')) {
+    // start past the last /, if any
+    const lastSlashIndex = model.lastIndexOf('/');
+    const modelName = lastSlashIndex === -1 ? model : model.slice(lastSlashIndex + 1);
+    return modelName.replace('deepseek-', ' Deepseek ')
+      .replace('reasoner', 'R1').replace('r1', 'R1')
+      .replaceAll('-', ' ')
+      .trim();
+  }
   // [LM Studio]
   if (model.startsWith('C:\\') || model.startsWith('D:\\'))
     return _prettyLMStudioFileModelName(model).replace('.gguf', '');
@@ -356,7 +375,13 @@ export function prettyShortChatModelName(model: string | undefined): string {
   if (model.includes(':'))
     return model.replace(':latest', '').replaceAll(':', ' ');
   // [xAI]
-  if (model.includes('grok-beta')) return 'Grok Beta';
+  if (model.includes('grok-')) {
+    if (model.includes('grok-3')) return 'Grok 3';
+    if (model.includes('grok-2-vision')) return 'Grok 2 Vision';
+    if (model.includes('grok-2')) return 'Grok 2';
+    if (model.includes('grok-beta')) return 'Grok Beta';
+    if (model.includes('grok-vision-beta')) return 'Grok Vision Beta';
+  }
   return model;
 }
 
